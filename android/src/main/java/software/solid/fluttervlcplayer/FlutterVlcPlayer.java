@@ -47,9 +47,7 @@ final class FlutterVlcPlayer implements PlatformView {
     private final EventChannel rendererEventChannel;
     //
     private List<String> options;
-    private List<RendererDiscoverer> rendererDiscoverers = new ArrayList<>();
-    private List<RendererItem> rendererItems = new ArrayList<>();
-    private boolean isDisposed = false;
+      private boolean isDisposed = false;
 
     // Platform view
     @Override
