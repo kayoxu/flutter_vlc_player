@@ -151,12 +151,14 @@ final class FlutterVlcPlayer implements PlatformView {
     }
 
     int getVolume() {
+        return 0;
     }
 
     void setPlaybackSpeed(double value) {
     }
 
     float getPlaybackSpeed() {
+        return 0;
     }
 
     void seekTo(int location) {
