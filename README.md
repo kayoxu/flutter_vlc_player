@@ -1,12 +1,9 @@
-#  Flutter VLC Player Plugin
-[![Join the chat at https://discord.gg/mNY4fjVk](https://img.shields.io/discord/716939396464508958?label=discord)](https://discord.gg/mNY4fjVk)
-[![Support me on Patreon](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3Dsolidsoftwarehq%26type%3Dpatrons&style=flat)](https://patreon.com/solidsoftwarehq)
-
+#  VLC Player Plugin
 A VLC-powered alternative to Flutter's video_player that supports iOS and Android.
 
 <div>
-  <img src="/flutter_vlc_player/doc/single.jpg" height="400">
-  <img src="/flutter_vlc_player/doc/multiple.jpg" height="400">
+  <img src="https://raw.githubusercontent.com/solid-software/flutter_vlc_player/master/flutter_vlc_player/doc/single.jpg" height="400">
+  <img src="https://raw.githubusercontent.com/solid-software/flutter_vlc_player/master/flutter_vlc_player/doc/multiple.jpg" height="400">
 </div>
 
 <br>
@@ -67,7 +64,7 @@ In order to load media/subtitle from internal device storage, you should put the
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 ```
-In some cases you also need to add the `android:requestLegacyExternalStorage="true"` flag to the Application tag in AndroidManifest.xml file to avoid acess denied errors. Android 10 apps can't acess storage without that flag. [reference](https://stackoverflow.com/a/60917774/14919621)
+In some cases you also need to add the `android:requestLegacyExternalStorage="true"` flag to the Application tag in AndroidManifest.xml file.
 
 After that you can access the media/subtitle file by 
 
@@ -103,6 +100,25 @@ android {
 ```proguard
 -keep class org.videolan.libvlc.** { *; }
 ```
+<hr>
+
+#### Android multi-window support
+
+To enable multi-window support in your Android application, you need to make changes to `AndroidManifest.xml`, add the `android:resizeableActivity` key for the main activity, as well as the `android.allow_multiple_resumed_activities` metadata for application:
+```xml
+<manifest ...>
+  <application ...>
+    <activity ...
+      android:resizeableActivity="true">
+      ...
+    </activity>
+    ...
+    <meta-data
+      android:name="android.allow_multiple_resumed_activities"
+      android:value="true" />
+  </application>
+</manifest>
+```
 
 <br>
 
@@ -111,7 +127,7 @@ To start using the plugin, copy this code or follow the example project in 'flut
 
 ```dart
 import 'package:flutter/material.dart';
-import 'package:flutter_vlc_player/flutter_vlc_player.dart';
+import 'package:flutter_vlc_player/vlc_player_flutter.dart';
 
 void main() {
   runApp(MyApp());
@@ -141,13 +157,15 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   VlcPlayerController _videoPlayerController;
 
+  Future<void> initializePlayer() async {}
+
   @override
   void initState() {
     super.initState();
 
     _videoPlayerController = VlcPlayerController.network(
       'https://media.w3.org/2010/05/sintel/trailer.mp4',
-      hwAcc: HwAcc.full,
+      hwAcc: HwAcc.FULL,
       autoPlay: false,
       options: VlcPlayerOptions(),
     );
@@ -157,24 +175,25 @@ class _MyHomePageState extends State<MyHomePage> {
   void dispose() async {
     super.dispose();
     await _videoPlayerController.stopRendererScanning();
-    await _videoPlayerController.dispose();
+    await _videoViewController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Center(
-        child: VlcPlayer(
-          controller: _videoPlayerController,
-          aspectRatio: 16 / 9,
-          placeholder: Center(child: CircularProgressIndicator()),
-        ),
-      ),
-    );
+        appBar: AppBar(),
+        body: Center(
+          child: VlcPlayer(
+            controller: _videoPlayerController,
+            aspectRatio: 16 / 9,
+            placeholder: Center(child: CircularProgressIndicator()),
+          ),
+        ));
   }
 }
+
 ```
+
 <br>
 
 ### Recording feature
