@@ -1,7 +1,6 @@
 package software.solid.fluttervlcplayer;
 
-import org.videolan.libvlc.MediaPlayer;
-import org.videolan.libvlc.interfaces.IVLCVout;
+
 
 import android.content.Context;
 import android.graphics.SurfaceTexture;
@@ -14,10 +13,9 @@ import android.view.ViewGroup;
 
 import io.flutter.view.TextureRegistry;
 
-public class VLCTextureView extends TextureView implements TextureView.SurfaceTextureListener, View.OnLayoutChangeListener, IVLCVout.OnNewVideoLayoutListener {
+public class VLCTextureView extends TextureView implements TextureView.SurfaceTextureListener, View.OnLayoutChangeListener {
 
-    private MediaPlayer mMediaPlayer = null;
-    private TextureRegistry.SurfaceTextureEntry mTextureEntry = null;
+     private TextureRegistry.SurfaceTextureEntry mTextureEntry = null;
     protected Context mContext;
     private SurfaceTexture mSurfaceTexture = null;
     private boolean wasPlaying = false;
@@ -59,8 +57,7 @@ public class VLCTextureView extends TextureView implements TextureView.SurfaceTe
             mSurfaceTexture = null;
         }
         mTextureEntry = null;
-        mMediaPlayer = null;
-        mContext = null;
+         mContext = null;
     }
 
     private void initVideoView() {
@@ -71,17 +68,6 @@ public class VLCTextureView extends TextureView implements TextureView.SurfaceTe
         addOnLayoutChangeListener(this);
     }
 
-    public void setMediaPlayer(MediaPlayer mediaPlayer) {
-        if (mediaPlayer == null) {
-            mMediaPlayer.getVLCVout().detachViews();
-        }
-
-        mMediaPlayer = mediaPlayer;
-
-        if (mMediaPlayer != null) {
-            mMediaPlayer.getVLCVout().attachViews(this);
-        }
-    }
 
     public void setTextureEntry(TextureRegistry.SurfaceTextureEntry textureEntry) {
         this.mTextureEntry = textureEntry;
@@ -102,19 +88,6 @@ public class VLCTextureView extends TextureView implements TextureView.SurfaceTe
         if (mSurfaceTexture == null || mSurfaceTexture.isReleased()) {
             mSurfaceTexture = surface;
 
-            if (mMediaPlayer != null) {
-                mMediaPlayer.getVLCVout().setWindowSize(width, height);
-                if (!mMediaPlayer.getVLCVout().areViewsAttached()) {
-                    mMediaPlayer.getVLCVout().setVideoSurface(mSurfaceTexture);
-                    if (!mMediaPlayer.getVLCVout().areViewsAttached()) {
-                        mMediaPlayer.getVLCVout().attachViews(this);
-                    }
-                    mMediaPlayer.setVideoTrackEnabled(true);
-                    if (wasPlaying) {
-                        mMediaPlayer.play();
-                    }
-                }
-            }
 
             wasPlaying = false;
 
@@ -133,9 +106,7 @@ public class VLCTextureView extends TextureView implements TextureView.SurfaceTe
 
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-        if (mMediaPlayer != null) {
-            wasPlaying = mMediaPlayer.isPlaying();
-        }
+
 
         if (mSurfaceTexture != surface) {
             if (mSurfaceTexture != null) {
@@ -154,12 +125,7 @@ public class VLCTextureView extends TextureView implements TextureView.SurfaceTe
 
     }
 
-    @Override
-    public void onNewVideoLayout(IVLCVout vlcVout, int width, int height, int visibleWidth, int visibleHeight, int sarNum, int sarDen) {
-        if (width * height == 0) return;
-        
-        setSize(width, height);
-    }
+
 
     @Override
     public void onLayoutChange(View view, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
@@ -169,10 +135,7 @@ public class VLCTextureView extends TextureView implements TextureView.SurfaceTe
     }
 
     public void updateLayoutSize(View view) {
-        if (mMediaPlayer != null) {
-            mMediaPlayer.getVLCVout().setWindowSize(view.getWidth(), view.getHeight());
-            updateSurfaceTexture();
-        }
+
     }
 
     private void setSize(int width, int height) {
